@@ -45,7 +45,9 @@ class upload(object):
 
         # ファイル分割
         ## 分割容量 1MB
-        size = 1024*1024
+#        size = 1024*1024
+        ## 分割容量 1KB
+        size = 1024
         l = os.path.getsize("download/" + id.hex)
         ## 分割数
         div_num = (l + size - 1) / size
@@ -57,10 +59,12 @@ class upload(object):
         for i in range(div_num):
             read_size = last if i == div_num-1 else size
             data = b.read(read_size)  ## data = 分割後のファイル内容
-            ipfs_hashs.append( api.add(data) )  ## IPFSにアップロード
-#            out = open(f + '.frac' + str(i), 'wb')
-#            out.write(data)
-#            out.close()
+            out = open("download/" + id.hex + '.frac' + str(i), 'wb')
+            out.write(data)
+            out.close()
+            
+            ## IFPSにアップロード
+            ipfs_hashs.append( api.add("download/" + id.hex + '.frac' + str(i)) ) 
         b.close()
         
         
@@ -68,14 +72,14 @@ class upload(object):
         resp = {
             'id': id.hex,                   ## filename
             'div_num': div_num,             ## 分割数
-            'encrypt_data': encrypt_data,   ## 暗号化したデータ(不要？)
+#            'encrypt_data': encrypt_data,   ## 暗号化したデータ(不要？)
             'password': password,           ## パスワード
             'ipfs': ipfs_hashs   ## 分割したファイルのIPFSアドレス一覧
         }
 
         # メタデータ保存
-        c = open("download/" + id.hex + ".metadata", 'wb')
-        c.write(resp)
+        c = open("metadata/" + id.hex + ".metadata", 'wb')
+        c.write( json.dumps(resp) )
 
         ## return
         res.body = json.dumps(resp)
