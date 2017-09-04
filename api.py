@@ -29,7 +29,7 @@ class upload(object):
     def on_post(self, req, res):
         
         # ファイル名をUUIDとする。
-        uuid = uuid.uuid4() 
+        id = uuid.uuid4() 
         
         # bodyからファイルのバイナリ取得
         body = req.stream.read()
