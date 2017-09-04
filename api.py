@@ -74,7 +74,7 @@ class upload(object):
         }
 
         # メタデータ保存
-        c = open(id.hex + ".metadata", 'rb')
+        c = open("download/" + id.hex + ".metadata", 'rb')
         c.write(resp)
 
         ## return
