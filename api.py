@@ -40,13 +40,13 @@ class upload(object):
         encrypt_data = get_encrypt_data(body, password, iv)
 
         # 一旦ファイルを保存
-        with open(id.hex, 'wb') as f:
+        with open("download/" + id.hex, 'wb') as f:
             f.write(encrypt_data)
 
         # ファイル分割
         ## 分割容量 1MB
         size = 1024*1024
-        l = os.path.getsize(id.hex)
+        l = os.path.getsize("download/" + id.hex)
         ## 分割数
         div_num = (l + size - 1) / size
         last = (size * div_num) - l
