@@ -1,7 +1,7 @@
 
 <?php
 // file_get_contentsでデータを取得
-$url = 'http://192.168.12.11:8000/upload';
+$url = 'http://192.168.12.110:8000/upload';
 // 送信するデータ
 $filename = 'sample.txt';
 $image = file_get_contents('cc2.jpg');
