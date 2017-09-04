@@ -10,9 +10,8 @@ import base64
 
 ## IPFS Setting
 import ipfsapi
-ipfs_url = 
 #api = ipfsapi.connect('127.0.0.1', 5001)
-api = ipfsapi.connect('https://ipfs.io/ipfs/)
+api = ipfsapi.connect('https://ipfs.io/ipfs/')
 
 
 class upload(object):
