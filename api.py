@@ -51,7 +51,7 @@ class upload(object):
         div_num = (l + size - 1) / size
         last = (size * div_num) - l
 
-        b = open(id.hex, 'rb')
+        b = open("download/" + id.hex, 'rb')
         ## ipfs_hashs
         ipfs_hashs = []
         for i in range(div_num):
