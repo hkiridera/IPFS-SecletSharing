@@ -40,13 +40,13 @@ class upload(object):
         encrypt_data = get_encrypt_data(body, password, iv)
 
         # 一旦ファイルを保存
-        with open(uuid, 'wb') as f:
+        with open(id, 'wb') as f:
             f.write(encrypt_data)
 
         # ファイル分割
         ## 分割容量 1MB
         size = 1024*1024
-        l = os.path.getsize(uuid)
+        l = os.path.getsize(id)
         ## 分割数
         div_num = (l + size - 1) / size
         last = (size * div_num) - l
@@ -66,7 +66,7 @@ class upload(object):
         
         ##返り値&metadata生成
         resp = {
-            'uuid': uuid,                   ## filename
+            'id': id,                   ## filename
             'div_num': div_num,             ## 分割数
             'encrypt_data': encrypt_data,   ## 暗号化したデータ(不要？)
             'password': password,           ## パスワード
@@ -74,7 +74,7 @@ class upload(object):
         }
 
         # メタデータ保存
-        c = open(uuid + ".metadata", 'rb')
+        c = open(id + ".metadata", 'rb')
         c.write(resp)
 
         ## return
