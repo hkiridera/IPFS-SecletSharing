@@ -28,8 +28,8 @@ class upload(object):
     # postされた時の動作
     def on_post(self, req, res):
         
-        # headerからファイル名を取得
-        uuid = req.get_header(uuid.uuid4())
+        # ファイル名をUUIDとする。
+        uuid = uuid.uuid4() 
         
         # bodyからファイルのバイナリ取得
         body = req.stream.read()
