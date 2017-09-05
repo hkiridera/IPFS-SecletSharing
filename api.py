@@ -40,7 +40,7 @@ class upload(object):
         encrypt_data = get_encrypt_data(body, password, iv)
 
         # 一旦ファイルを保存
-        with open("download/" + id.hex, 'wb') as f:
+        with open("upload/" + id.hex, 'wb') as f:
             f.write(encrypt_data)
 
         # ファイル分割
@@ -48,23 +48,23 @@ class upload(object):
 #        size = 1024*1024
         ## 分割容量 1KB
         size = 1024
-        l = os.path.getsize("download/" + id.hex)
+        l = os.path.getsize("upload/" + id.hex)
         ## 分割数
         div_num = (l + size - 1) / size
         last = (size * div_num) - l
 
-        b = open("download/" + id.hex, 'rb')
+        b = open("upload/" + id.hex, 'rb')
         ## ipfs_hashs
         ipfs_hashs = []
         for i in range(div_num):
             read_size = last if i == div_num-1 else size
             data = b.read(read_size)  ## data = 分割後のファイル内容
-            out = open("download/" + id.hex + '.frac' + str(i), 'wb')
+            out = open("upload/" + id.hex + '.frac' + str(i), 'wb')
             out.write(data)
             out.close()
             
             ## IFPSにアップロード
-            ipfs_hashs.append( api.add("download/" + id.hex + '.frac' + str(i)) ) 
+            ipfs_hashs.append( api.add("upload/" + id.hex + '.frac' + str(i)) ) 
         b.close()
         
         
@@ -88,6 +88,11 @@ class upload(object):
 ## Routing
 app = falcon.API()
 app.add_route("/upload", upload())
+
+
+
+
+
 
 ## 暗号化
 def get_encrypt_data(raw_data, key, iv):
