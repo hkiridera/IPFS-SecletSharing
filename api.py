@@ -69,7 +69,7 @@ class upload(object):
         
         
         ##返り値&metadata生成
-        resp = {
+        msg = {
             'id': id.hex,                   ## filename
             'div_num': div_num,             ## 分割数
 #            'encrypt_data': encrypt_data,   ## 暗号化したデータ(不要？)
@@ -79,16 +79,32 @@ class upload(object):
 
         # メタデータ保存
         c = open("metadata/" + id.hex + ".metadata", 'wb')
-        c.write( json.dumps(resp) )
+        c.write( json.dumps(msg) )
+        c.close
 
         ## return
-        res.body = json.dumps(resp)
+        res.body = json.dumps(msg)
+
+
+
+class metadata(object):
+    # getされた時の動作
+    def on_get(self, req, res, id):
+        # metadatafileの参照
+        f = open("metadata/" + id + ".metadata", 'rb')
+        data = f.read()
+        f.close()
+
+        msg = {
+            data
+        }
+        res.body = json.dumps(msg)
 
 
 ## Routing
 app = falcon.API()
 app.add_route("/upload", upload())
-
+app.add_route("/metadata/{id}", metadata())
 
 
 
