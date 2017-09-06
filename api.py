@@ -15,6 +15,8 @@ import ipfsapi
 api = ipfsapi.connect('192.168.12.118', 5001)
 #api = ipfsapi.connect('https://ipfs.io/ipfs/')
 
+# 難読化
+iv = "nanndokuka"
 
 class upload(object):
     
@@ -36,7 +38,6 @@ class upload(object):
         
         # 暗号化
         password = "password"
-        iv = "nanndokuka"
         encrypt_data = get_encrypt_data(body, password, iv)
 
         # 一旦ファイルを保存
@@ -45,7 +46,7 @@ class upload(object):
 
         # ファイル分割
         ## 分割容量 1MB
-#        size = 1024*1024
+        #size = 1024*1024
         ## 分割容量 1KB
         size = 1024
         l = os.path.getsize("upload/" + id.hex)
@@ -72,7 +73,7 @@ class upload(object):
         msg = {
             'id': id.hex,                   ## filename
             'div_num': div_num,             ## 分割数
-#            'encrypt_data': encrypt_data,   ## 暗号化したデータ(不要？)
+            #'encrypt_data': encrypt_data,   ## 暗号化したデータ(不要？)
             'password': password,           ## パスワード
             'ipfs': ipfs_hashs   ## 分割したファイルのIPFSアドレス一覧
         }
@@ -83,6 +84,9 @@ class upload(object):
         c.close
 
         ## return
+        msg = {
+            "message": "Succese"
+        }
         res.body = json.dumps(msg)
 
 
@@ -103,16 +107,60 @@ class metadata(object):
             print '"%s" cannot be opened.' % arg
             msg = {"message": "File Not Found."}
         
-        
+
         res.body = json.dumps(msg)
 
+class download(object):
+    # getされた時の動作
+    def on_get(self, req, res):
+        msg = {
+            "message": "Welcome to the Falcon"
+        }
+        res.body = json.dumps(msg)
 
+    # postされた時の動作
+    def on_post(self, req, res):
+        ## id.metadataのファイルを受け取る
+        # bodyからファイルのバイナリ取得
+        body = req.stream.read()
+        json_dict = json.load(body)
+        
+        ## jsonの構文解析をする
+        ### jsonからidを取得
+        id = json_dict["id"]
+        password = json_dict["password"]
+        div_num = json_dict["div_num"]
+
+        ## divnumの数だけループする
+        ## ipfsのハッシュ分だけfileをdownloadする
+        b = open("download/" + id + ".seclet", 'wb')
+        for (i=0;i<div_num;i++)
+            ## 結合する
+            b.write = api.cat(json_dict["ipfs"][i])
+        b.close()
+
+        ## 復号化前のデータを取得
+        b = open("download/" + id + ".seclet", 'rb')
+        encrypt_data = b.read()
+        b.close()
+
+        ## 復号化
+        decrypt_data = get_decrypt_data(encrypt_data, password, iv)
+        
+        ## ファイル出力
+        out = open("download/" + id , 'wb')
+        out.write(decrypt_data)
+
+        
+        ## Fileを返す(返せないのでdownloadに保存)
+        res.body = json.dumps(msg)
 
 
 ## Routing
 app = falcon.API()
 app.add_route("/upload", upload())
 app.add_route("/metadata/{id}", metadata())
+app.add_route("/download/", download())
 
 
 
