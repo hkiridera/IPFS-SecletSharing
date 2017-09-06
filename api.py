@@ -134,7 +134,7 @@ class download(object):
         ## divnumの数だけループする
         ## ipfsのハッシュ分だけfileをdownloadする
         b = open("download/" + id + ".seclet", 'wb')
-        for (i=0;i<div_num;i++)
+        for i in range(div_num)
             ## 結合する
             b.write = api.cat(json_dict["ipfs"][i])
         b.close()
