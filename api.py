@@ -31,17 +31,19 @@ class upload(object):
     def on_post(self, req, res):
         
         # ファイル名をUUIDとする。
-        id = uuid.uuid4() 
+#        id = uuid.uuid4() 
         
         # bodyからファイルのバイナリ取得
         body = req.stream.read()
+        id = hashlib.md5(body).hexdigest()
+        print id
         
         # 暗号化
         password = "password"
         encrypt_data = get_encrypt_data(body, password, iv)
 
         # 一旦ファイルを保存
-        with open("upload/" + id.hex, 'wb') as f:
+        with open("upload/" + id, 'wb') as f:
             f.write(encrypt_data)
 
         # ファイル分割
@@ -49,29 +51,29 @@ class upload(object):
         #size = 1024*1024
         ## 分割容量 1KB
         size = 1024
-        l = os.path.getsize("upload/" + id.hex)
+        l = os.path.getsize("upload/" + id)
         ## 分割数
         div_num = (l + size - 1) / size
         last = (size * div_num) - l
 
-        b = open("upload/" + id.hex, 'rb')
+        b = open("upload/" + id, 'rb')
         ## ipfs_hashs
         ipfs_hashs = []
         for i in range(div_num):
             read_size = last if i == div_num-1 else size
             data = b.read(read_size)  ## data = 分割後のファイル内容
-            out = open("upload/" + id.hex + '.frac' + str(i), 'wb')
+            out = open("upload/" + id + '.frac' + str(i), 'wb')
             out.write(data)
             out.close()
             
             ## IFPSにアップロード
-            ipfs_hashs.append( api.add("upload/" + id.hex + '.frac' + str(i)) ) 
+            ipfs_hashs.append( api.add("upload/" + id + '.frac' + str(i)) ) 
         b.close()
         
         
         ##返り値&metadata生成
         msg = {
-            'id': id.hex,                   ## filename
+            'id': id,                   ## filename
             'div_num': div_num,             ## 分割数
             #'encrypt_data': encrypt_data,   ## 暗号化したデータ(不要？)
             'password': password,           ## パスワード
@@ -79,7 +81,7 @@ class upload(object):
         }
 
         # メタデータ保存
-        c = open("metadata/" + id.hex + ".metadata", 'wb')
+        c = open("metadata/" + id + ".metadata", 'wb')
         c.write( json.dumps(msg) )
         c.close
 
