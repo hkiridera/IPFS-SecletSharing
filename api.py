@@ -119,7 +119,7 @@ class download(object):
         ## id.metadataのファイルを受け取る
         # bodyからファイルのバイナリ取得
         body = req.stream.read()
-        json_dict = json.load(body)
+        json_dict = json.loads(body)
         
         ## jsonの構文解析をする
         ### jsonからidを取得
