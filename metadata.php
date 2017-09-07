@@ -1,6 +1,6 @@
 <?php
 // file_get_contentsでデータを取得
-$url = 'http://192.168.12.110:8000/metadata/0217ad03124e41fc9c8f6e7830bfd7fba';
+$url = 'http://localhost:8000/metadata/0217ad03124e41fc9c8f6e7830bfd7fba';
 // 送信するデータ
 // POSTするデータを作成
 $header = [
