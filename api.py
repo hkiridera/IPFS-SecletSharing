@@ -132,7 +132,7 @@ class download(object):
         b = open("download/" + id + ".seclet", 'wb')
         for i in range(div_num):
             ## 結合する
-            b.write = api.cat(json_dict["ipfs"][i])
+            b.write( api.cat(json_dict["ipfs"][i]) )
         b.close()
 
         ## 復号化前のデータを取得
