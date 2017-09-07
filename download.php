@@ -3,8 +3,8 @@
 // file_get_contentsでデータを取得
 $url = 'http://localhost:8000/download';
 // 送信するデータ
-$filename = 'metadata/0217ad03124e41fc9c8f6e7830bfd7fb.metadata';
-$file = file_get_contents('metadata/0217ad03124e41fc9c8f6e7830bfd7fb.metadata');
+$filename = 'metadata/4fd9b79bc51e4d77ba89b015c22a8fc7.metadata';
+$file = file_get_contents('metadata/4fd9b79bc51e4d77ba89b015c22a8fc7.metadata');
 // POSTするデータを作成
 $header = [
     "Content-Type: application/json; charset=UTF-8;",
