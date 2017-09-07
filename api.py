@@ -123,7 +123,7 @@ class download(object):
         ## id.metadataのファイルを受け取る
         # bodyからファイルのバイナリ取得
         body = req.stream.read()
-        json_dict = json.load(body)
+        json_dict = json.loads(body)
         
         ## jsonの構文解析をする
         ### jsonからidを取得
@@ -134,9 +134,17 @@ class download(object):
         ## divnumの数だけループする
         ## ipfsのハッシュ分だけfileをdownloadする
         b = open("download/" + id + ".seclet", 'wb')
-        for i in range(div_num)
+        for i in range(div_num):
             ## 結合する
-            b.write = api.cat(json_dict["ipfs"][i])
+            try:
+              print(json_dict["ipfs"][i]["Hash"])
+              b.write( api.cat(json_dict["ipfs"][i]["Hash"]) )
+              
+            except:
+              print("Error Index Number : ".i)
+              import traceback
+              traceback.print_exc()
+
         b.close()
 
         ## 復号化前のデータを取得
@@ -151,6 +159,11 @@ class download(object):
         out = open("download/" + id , 'wb')
         out.write(decrypt_data)
 
+
+        ## return
+        msg = {
+            "message": "Succese"
+        }
         
         ## Fileを返す(返せないのでdownloadに保存)
         res.body = json.dumps(msg)
