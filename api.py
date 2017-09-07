@@ -83,10 +83,6 @@ class upload(object):
         c.write( json.dumps(msg) )
         c.close
 
-        ## return
-        msg = {
-            "message": "Succese"
-        }
         res.body = json.dumps(msg)
 
 
@@ -123,7 +119,7 @@ class download(object):
         ## id.metadataのファイルを受け取る
         # bodyからファイルのバイナリ取得
         body = req.stream.read()
-        json_dict = json.loads(body)
+        json_dict = json.load(body)
         
         ## jsonの構文解析をする
         ### jsonからidを取得
@@ -136,15 +132,7 @@ class download(object):
         b = open("download/" + id + ".seclet", 'wb')
         for i in range(div_num):
             ## 結合する
-            try:
-              print(json_dict["ipfs"][i]["Hash"])
-              b.write( api.cat(json_dict["ipfs"][i]["Hash"]) )
-              
-            except:
-              print("Error Index Number : ".i)
-              import traceback
-              traceback.print_exc()
-
+            b.write = api.cat(json_dict["ipfs"][i])
         b.close()
 
         ## 復号化前のデータを取得
@@ -158,7 +146,6 @@ class download(object):
         ## ファイル出力
         out = open("download/" + id , 'wb')
         out.write(decrypt_data)
-
 
         ## return
         msg = {
