@@ -30,13 +30,13 @@ class upload(object):
     # postされた時の動作
     def on_post(self, req, res):
         
-        # ファイル名をUUIDとする。
+        # ファイル名を取得する
+        filename = req.get_header('File-Name')
 #        id = uuid.uuid4() 
         
         # bodyからファイルのバイナリ取得
         body = req.stream.read()
         id = hashlib.md5(body).hexdigest()
-        print id
         
         # 暗号化
         password = "password"
@@ -73,7 +73,8 @@ class upload(object):
         
         ##返り値&metadata生成
         msg = {
-            'id': id,                   ## filename
+            'id': id,                   ## id
+            'filename': filename,       ## filename
             'div_num': div_num,             ## 分割数
             #'encrypt_data': encrypt_data,   ## 暗号化したデータ(不要？)
             'password': password,           ## パスワード

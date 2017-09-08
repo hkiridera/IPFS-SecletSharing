@@ -4,11 +4,12 @@
 $url = 'http://localhost:8000/upload';
 // 送信するデータ
 $filename = 'sample.txt';
-$file = file_get_contents('sample.txt');
+$file = file_get_contents($filename);
 // POSTするデータを作成
 $header = [
     "Content-Type: application/json; charset=UTF-8;",
     "Content-Length: ".strlen($file),
+    "File-Name: " . $filename
 ];
 $context = stream_context_create([
     'http' => [
