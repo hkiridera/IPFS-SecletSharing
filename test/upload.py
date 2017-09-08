@@ -5,11 +5,13 @@ from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
 import urllib2
 
+filename = "test.txt"
+
 if __name__ == '__main__':
     # Register streaming http handlers to urllib2 global object
     register_openers()
 
-    with open("test.txt", "rb") as f:
+    with open(filename, "rb") as f:
         data = f.read()
         request = urllib2.Request("http://localhost:8000/upload", data)
         request.add_header('Content-Length', '%d' % len(data))
