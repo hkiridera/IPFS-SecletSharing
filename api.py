@@ -43,8 +43,8 @@ class upload(object):
         # bodyからファイルのバイナリ取得
         body = req.stream.read()
         id = hashlib.md5(body).hexdigest()
-        print body
-        print id
+        #print body
+        #print id
         
         # 暗号化
         password = "password"
