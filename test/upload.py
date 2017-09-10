@@ -17,6 +17,7 @@ if __name__ == '__main__':
         request.add_header('Content-Length', '%d' % len(data))
         request.add_header('Content-Type', 'application/octet-stream')
         request.add_header('Content-Type', 'application/json')
+        request.add_header('File-Name', filename)
         response = urllib2.urlopen(request)
 
         print "---------- RESPONSE HEAD ----------"

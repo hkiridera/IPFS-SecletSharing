@@ -1,6 +1,7 @@
 <html>
     <head>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script src="./js/jquery.xdomainajax.js" type="text/javascript"></script>
     <style>
     #dragandrophandler
     {
@@ -78,7 +79,9 @@
     <script>
     function sendFileToServer(formData,status)
     {
-        var uploadURL ="http://localhost:8000/upload"; //Upload URL
+        var filename = status.filename[0].textContent
+        var bytesArray = new Uint8Array(formData);
+        var uploadURL ="http://192.168.12.118:8000/upload"; //Upload URL
         var extraData ={}; //Extra Data.
         var jqXHR=$.ajax({
             xhr: function() {
@@ -98,16 +101,26 @@
             return xhrobj;
             },
             url: uploadURL,
+            crossDomain: true,
             type: "POST",
+            headers: {
+                'File-Name': filename
+            },
             contentType:'application/octet-stream',
             processData: false,
             cache: false,
-            data: formData,
-            dataType: "binary",
+            data: bytesArray,
+            dataType: false,
             success: function(data){
                 status.setProgress(100);
-      
-                $("#status1").append("File upload Done<br>");        
+                let downloadData = new Blob([JSON.stringify(data)]);
+                let downloadUrl  = (window.URL || window.webkitURL).createObjectURL(downloadData);
+                let link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = filename + ".metadata";
+                link.click();
+                (window.URL || window.webkitURL).revokeObjectURL(downloadUrl);
+                $("#status1").append(JSON.stringify(data));        
             }
         });
       
@@ -192,7 +205,6 @@
     });
     obj.on('drop', function (e)
     {
-      
          $(this).css('border', '2px dotted #0B85A1');
          e.preventDefault();
          var files = e.originalEvent.dataTransfer.files;
