@@ -115,6 +115,7 @@
             dataType: false,
             success: function(data){
                 status.setProgress(100);
+                // metadataファイルのダウンロード
                 let downloadData = new Blob([JSON.stringify(data)]);
                 let downloadUrl  = (window.URL || window.webkitURL).createObjectURL(downloadData);
                 let link = document.createElement('a');
@@ -181,7 +182,6 @@
     function handleFileUpload(file,obj)
     {
         
-        console.dir(file)
         var reader = new FileReader();
         reader.readAsText(file);
         //読込終了後の処理
