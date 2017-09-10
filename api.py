@@ -165,7 +165,8 @@ class download(object):
         }
         
         ## Fileを返す(返せないのでdownloadに保存)
-        res.body = json.dumps(msg)
+        ## res.body = json.dumps(msg)
+        res.body = json.dumps(decrypt_data)
 
 
 ## Routing
