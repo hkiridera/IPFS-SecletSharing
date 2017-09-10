@@ -80,7 +80,9 @@
     function sendFileToServer(formData,status)
     {
         var filename = status.filename[0].textContent
-        var bytesArray = new Uint8Array(formData);
+        //var bytesArray = new Uint8Array(formData);
+
+        //var uploadURL ="http://192.168.12.118:8000/upload"; //Upload URL
         var uploadURL ="http://localhost:8000/upload"; //Upload URL
         var extraData ={}; //Extra Data.
         var jqXHR=$.ajax({
@@ -109,7 +111,7 @@
             contentType:'application/octet-stream',
             processData: false,
             cache: false,
-            data: bytesArray,
+            data: formData,
             dataType: false,
             success: function(data){
                 status.setProgress(100);
@@ -176,18 +178,25 @@
             });
         }
     }
-    function handleFileUpload(files,obj)
+    function handleFileUpload(file,obj)
     {
-       for (var i = 0; i < files.length; i++)
-       {
-            var fd = new FormData();
-            fd.append('file', files[i]);
-      
+        
+        console.dir(file)
+        var reader = new FileReader();
+        reader.readAsText(file);
+        //読込終了後の処理
+        reader.onload = function(ev){
+            //ファイルの中身を取得する
+            let fd = reader.result;
+        
+            //var fd = new FormData();
+            //fd.append('file', files[i]);
+
             var status = new createStatusbar(obj); //Using this we can set progress.
-            status.setFileNameSize(files[i].name,files[i].size);
+            status.setFileNameSize(file.name,file.size);
             sendFileToServer(fd,status);
-      
-       }
+        }
+    
     }
     $(document).ready(function()
     {
@@ -205,12 +214,15 @@
     });
     obj.on('drop', function (e)
     {
-         $(this).css('border', '2px dotted #0B85A1');
-         e.preventDefault();
-         var files = e.originalEvent.dataTransfer.files;
+        $(this).css('border', '2px dotted #0B85A1');
+        e.preventDefault();
+        var files = e.originalEvent.dataTransfer.files;   
       
-         //We need to send dropped files to Server
-         handleFileUpload(files,obj);
+        // file1個ずつ処理していく 
+        for (var i = 0; i < files.length; i++)
+        {
+            handleFileUpload(files[i],obj);
+        }
     });
     $(document).on('dragenter', function (e)
     {
