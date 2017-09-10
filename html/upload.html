@@ -81,7 +81,7 @@
     {
         var filename = status.filename[0].textContent
         var bytesArray = new Uint8Array(formData);
-        var uploadURL ="http://192.168.12.118:8000/upload"; //Upload URL
+        var uploadURL ="http://localhost:8000/upload"; //Upload URL
         var extraData ={}; //Extra Data.
         var jqXHR=$.ajax({
             xhr: function() {

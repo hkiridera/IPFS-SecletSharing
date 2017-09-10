@@ -40,11 +40,11 @@ class upload(object):
         
         # ファイル名を取得する
         filename = req.get_header('File-Name')
-#        id = uuid.uuid4() 
-        
         # bodyからファイルのバイナリ取得
         body = req.stream.read()
         id = hashlib.md5(body).hexdigest()
+        print body
+        print id
         
         # 暗号化
         password = "password"
