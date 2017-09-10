@@ -81,28 +81,29 @@
         var uploadURL ="http://localhost:8000/upload"; //Upload URL
         var extraData ={}; //Extra Data.
         var jqXHR=$.ajax({
-                xhr: function() {
-                var xhrobj = $.ajaxSettings.xhr();
-                if (xhrobj.upload) {
-                        xhrobj.upload.addEventListener('progress', function(event) {
-                            var percent = 0;
-                            var position = event.loaded || event.position;
-                            var total = event.total;
-                            if (event.lengthComputable) {
-                                percent = Math.ceil(position / total * 100);
-                            }
-                            //Set progress
-                            status.setProgress(percent);
-                        }, false);
+            xhr: function() {
+            var xhrobj = $.ajaxSettings.xhr();
+            if (xhrobj.upload) {
+                xhrobj.upload.addEventListener('progress', function(event) {
+                    var percent = 0;
+                    var position = event.loaded || event.position;
+                    var total = event.total;
+                    if (event.lengthComputable) {
+                        percent = Math.ceil(position / total * 100);
                     }
-                return xhrobj;
+                    //Set progress
+                    status.setProgress(percent);
+                }, false);
+            }
+            return xhrobj;
             },
-        url: uploadURL,
-        type: "POST",
-        contentType:false,
-        processData: false,
+            url: uploadURL,
+            type: "POST",
+            contentType:'application/octet-stream',
+            processData: false,
             cache: false,
             data: formData,
+            dataType: "binary",
             success: function(data){
                 status.setProgress(100);
       

@@ -11,15 +11,23 @@ import base64
 
 ## IPFS Setting
 import ipfsapi
-api = ipfsapi.connect('127.0.0.1', 5001)
-#api = ipfsapi.connect('192.168.12.118', 5001)
-#api = ipfsapi.connect('https://ipfs.io/ipfs/')
+ipfsapi = ipfsapi.connect('127.0.0.1', 5001)
+#ipfsapi = ipfsipfsapi.connect('192.168.12.118', 5001)
+#ipfsapi = ipfsipfsapi.connect('https://ipfs.io/ipfs/')
 
 # 難読化
 iv = "nanndokuka"
 
+# CROS対策
+from falcon_cors import CORS
+cors_allow_all = CORS(allow_all_origins=True,
+                      allow_all_headers=True,
+                      allow_all_methods=True)
+api = falcon.API(middleware=[cors_allow_all.middleware])
+                      
+
 class upload(object):
-    
+
     # getされた時の動作
     def on_get(self, req, res):
         msg = {
@@ -67,7 +75,7 @@ class upload(object):
             out.close()
             
             ## IFPSにアップロード
-            ipfs_hashs.append( api.add("upload/" + id + '.frac' + str(i)) ) 
+            ipfs_hashs.append( ipfsapi.add("upload/" + id + '.frac' + str(i)) ) 
         b.close()
         
         
@@ -136,7 +144,7 @@ class download(object):
         for i in range(div_num):
             ## 結合する
             print json_dict["ipfs"][i]["Hash"]
-            b.write( api.cat(json_dict["ipfs"][i]["Hash"]) )
+            b.write( ipfsapi.cat(json_dict["ipfs"][i]["Hash"]) )
         b.close()
 
         ## 復号化前のデータを取得
@@ -161,10 +169,10 @@ class download(object):
 
 
 ## Routing
-app = falcon.API()
-app.add_route("/upload", upload())
-app.add_route("/metadata/{id}", metadata())
-app.add_route("/download/", download())
+## app = falcon.ipfsapi()
+api.add_route("/upload", upload())
+api.add_route("/metadata/{id}", metadata())
+api.add_route("/download/", download())
 
 
 
@@ -201,5 +209,5 @@ def get_decrypt_data(cipher_data_base64, key, iv):
 
 if __name__ == "__main__":
     from wsgiref import simple_server
-    httpd = simple_server.make_server("0.0.0.0", 8000, app)
+    httpd = simple_server.make_server("0.0.0.0", 8000, api)
     httpd.serve_forever()

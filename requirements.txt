@@ -5,3 +5,4 @@ uuid==1.30
 mimeparse==0.1.3
 urllib2==1498656401.94
 poster==0.8.1
+falcon-cors==1.7.1
