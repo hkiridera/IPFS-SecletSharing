@@ -79,11 +79,13 @@
     <script>
     function sendFileToServer(formData,status)
     {
-        var filename = status.filename[0].textContent;
+        var filename = status.filename[0].textContent.replace(/.metadata/g, "");
         //var bytesArray = new Uint8Array(formData);
+        //filename = (new Function("return " + formData))();
+        //filename = filename.filename;
 
-        var uploadURL ="http://192.168.12.118:8000/upload"; //Upload URL
-        //var uploadURL ="http://localhost:8000/upload"; //Upload URL
+        var uploadURL ="http://192.168.12.118:8000/download"; //Upload URL
+        //var uploadURL ="http://localhost:8000/download"; //Upload URL
         var extraData ={}; //Extra Data.
         var jqXHR=$.ajax({
             xhr: function() {
@@ -115,12 +117,16 @@
             dataType: false,
             success: function(data){
                 status.setProgress(100);
-                // metadataファイルのダウンロード
-                let downloadData = new Blob([JSON.stringify(data)]);
+                // オリジナルファイルのダウンロード
+                // base64のデコード
+                base = data.split(",")
+                let downloadData = new Blob([toBlob(base[1])]);
+
+                //ファイルダウンロード
                 let downloadUrl  = (window.URL || window.webkitURL).createObjectURL(downloadData);
                 let link = document.createElement('a');
                 link.href = downloadUrl;
-                link.download = filename + ".metadata";
+                link.download = filename;
                 link.click();
                 (window.URL || window.webkitURL).revokeObjectURL(downloadUrl);
                 //$("#status1").append(JSON.stringify(data));        
@@ -129,6 +135,24 @@
       
         status.setAbort(jqXHR);
     }
+
+    //引数はbase64形式の文字列
+function toBlob(base64) {
+    var bin = atob(base64.replace(/^.*,/, ''));
+    var buffer = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) {
+        buffer[i] = bin.charCodeAt(i);
+    }
+    // Blobを作成
+    try{
+        var blob = new Blob([buffer.buffer], {
+            type: 'image/png'
+        });
+    }catch (e){
+        return false;
+    }
+    return blob;
+}
       
     var rowCount=0;
     function createStatusbar(obj)
@@ -181,10 +205,10 @@
     }
     function handleFileUpload(file,obj)
     {
+        
         var reader = new FileReader();
-        reader.readAsDataURL(file);
-        //今のところテキストのみうまくいく
-        //reader.readAsText(file);
+        //reader.readAsDataURL(file);
+        reader.readAsText(file);
         //読込終了後の処理
         reader.onload = function(ev){
             //ファイルの中身を取得する
