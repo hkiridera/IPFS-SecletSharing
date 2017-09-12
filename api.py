@@ -3,7 +3,7 @@ import falcon
 import json
 import uuid
 import sys
-import os.path
+import os
 
 from Crypto.Cipher import AES
 import hashlib
@@ -76,7 +76,11 @@ class upload(object):
             
             ## IFPSにアップロード
             ipfs_hashs.append( ipfsapi.add("upload/" + id + '.frac' + str(i)) ) 
+            ## IPFSにアップロードしたら削除する
+            os.remove("upload/" + id + '.frac' + str(i))
         b.close()
+        ## アップロードされたファイルは削除する
+        os.remove("upload/" + id)
         
         
         ##返り値&metadata生成
@@ -158,6 +162,11 @@ class download(object):
         ## ファイル出力
         out = open("download/" + id , 'wb')
         out.write(decrypt_data)
+
+        ## 使い終わったファイルは削除
+        os.remove("download/" + id + ".seclet")
+        os.remove("download/" + id )
+
 
         ## return
         msg = {
