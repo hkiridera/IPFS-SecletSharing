@@ -25,6 +25,8 @@ cors_allow_all = CORS(allow_all_origins=True,
 api = falcon.API(middleware=[cors_allow_all.middleware])
                       
 
+debugmode = true
+
 class upload(object):
 
     # getされた時の動作
@@ -77,10 +79,12 @@ class upload(object):
             ## IFPSにアップロード
             ipfs_hashs.append( ipfsapi.add("tmp/" + id + '.frac' + str(i)) ) 
             ## IPFSにアップロードしたら削除する
-            os.remove("tmp/" + id + '.frac' + str(i))
+            if debugmode == true:
+                os.remove("tmp/" + id + '.frac' + str(i))
         b.close()
         ## アップロードされたファイルは削除する
-        os.remove("tmp/" + id)
+        if debugmode == true:
+            os.remove("tmp/" + id)
         
         
         ##返り値&metadata生成
@@ -166,8 +170,9 @@ class download(object):
         out.write(decrypt_data)
 
         ## 使い終わったファイルは削除
-        os.remove("tmp/" + id + ".seclet")
-        os.remove("tmp/" + id )
+        if debugmode == true:
+            os.remove("tmp/" + id + ".seclet")
+            os.remove("tmp/" + id )
 
 
         ## return
