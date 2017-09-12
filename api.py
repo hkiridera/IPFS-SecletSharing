@@ -51,7 +51,7 @@ class upload(object):
         encrypt_data = get_encrypt_data(body, password, iv)
 
         # 一旦ファイルを保存
-        with open("upload/" + id, 'wb') as f:
+        with open("tmp/" + id, 'wb') as f:
             f.write(encrypt_data)
 
         # ファイル分割
@@ -59,28 +59,28 @@ class upload(object):
         #size = 1024*1024
         ## 分割容量 1KB
         size = 1024
-        l = os.path.getsize("upload/" + id)
+        l = os.path.getsize("tmp/" + id)
         ## 分割数
         div_num = (l + size - 1) / size
         last = (size * div_num) - l
 
-        b = open("upload/" + id, 'rb')
+        b = open("tmp/" + id, 'rb')
         ## ipfs_hashs
         ipfs_hashs = []
         for i in range(div_num):
             read_size = last if i == div_num-1 else size
             data = b.read(read_size)  ## data = 分割後のファイル内容
-            out = open("upload/" + id + '.frac' + str(i), 'wb')
+            out = open("tmp/" + id + '.frac' + str(i), 'wb')
             out.write(data)
             out.close()
             
             ## IFPSにアップロード
-            ipfs_hashs.append( ipfsapi.add("upload/" + id + '.frac' + str(i)) ) 
+            ipfs_hashs.append( ipfsapi.add("tmp/" + id + '.frac' + str(i)) ) 
             ## IPFSにアップロードしたら削除する
-            os.remove("upload/" + id + '.frac' + str(i))
+            os.remove("tmp/" + id + '.frac' + str(i))
         b.close()
         ## アップロードされたファイルは削除する
-        os.remove("upload/" + id)
+        os.remove("tmp/" + id)
         
         
         ##返り値&metadata生成
@@ -144,7 +144,7 @@ class download(object):
 
         ## divnumの数だけループする
         ## ipfsのハッシュ分だけfileをdownloadする
-        b = open("download/" + id + ".seclet", 'wb')
+        b = open("tmp/" + id + ".seclet", 'wb')
         for i in range(div_num):
             ## 結合する
             print json_dict["ipfs"][i]["Hash"]
@@ -152,7 +152,7 @@ class download(object):
         b.close()
 
         ## 復号化前のデータを取得
-        b = open("download/" + id + ".seclet", 'rb')
+        b = open("tmp/" + id + ".seclet", 'rb')
         encrypt_data = b.read()
         b.close()
 
@@ -160,12 +160,12 @@ class download(object):
         decrypt_data = get_decrypt_data(encrypt_data, password, iv)
         
         ## ファイル出力
-        out = open("download/" + id , 'wb')
+        out = open("tmp/" + id , 'wb')
         out.write(decrypt_data)
 
         ## 使い終わったファイルは削除
-        os.remove("download/" + id + ".seclet")
-        os.remove("download/" + id )
+        os.remove("tmp/" + id + ".seclet")
+        os.remove("tmp/" + id )
 
 
         ## return
