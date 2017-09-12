@@ -4,6 +4,8 @@ import json
 import uuid
 import sys
 import os
+import random
+import string
 
 from Crypto.Cipher import AES
 import hashlib
@@ -14,9 +16,6 @@ import ipfsapi
 ipfsapi = ipfsapi.connect('127.0.0.1', 5001)
 #ipfsapi = ipfsipfsapi.connect('192.168.12.118', 5001)
 #ipfsapi = ipfsipfsapi.connect('https://ipfs.io/ipfs/')
-
-# 難読化
-iv = "nanndokuka"
 
 # CROS対策
 from falcon_cors import CORS
@@ -47,7 +46,8 @@ class upload(object):
         #print id
         
         # 暗号化
-        password = "password"
+        iv = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(512)])
+        password = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(512)])
         encrypt_data = get_encrypt_data(body, password, iv)
 
         # 一旦ファイルを保存
@@ -90,6 +90,7 @@ class upload(object):
             'div_num': div_num,             ## 分割数
             #'encrypt_data': encrypt_data,   ## 暗号化したデータ(不要？)
             'password': password,           ## パスワード
+            'iv': iv,               ## 初期化ベクトル
             'ipfs': ipfs_hashs   ## 分割したファイルのIPFSアドレス一覧
         }
 
@@ -139,6 +140,7 @@ class download(object):
         ## jsonの構文解析をする
         ### jsonからidを取得
         id = json_dict["id"]
+        iv = json_dict["iv"]
         password = json_dict["password"]
         div_num = json_dict["div_num"]
 
