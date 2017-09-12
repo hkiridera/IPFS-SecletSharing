@@ -46,8 +46,8 @@ class upload(object):
         #print id
         
         # 暗号化
-        iv = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(512)])
-        password = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(512)])
+        iv = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(64)])
+        password = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(64)])
         encrypt_data = get_encrypt_data(body, password, iv)
 
         # 一旦ファイルを保存
