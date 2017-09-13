@@ -9,9 +9,7 @@ if __name__ == '__main__':
     # Register streaming http handlers to urllib2 global object
     register_openers()
 
-
-
-    request = urllib2.Request("http://localhost:8000/metadataList", data)
+    request = urllib2.Request("http://localhost:8000/metadataList")
     request.add_header('Content-Type', 'application/json')
     response = urllib2.urlopen(request)
 

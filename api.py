@@ -185,12 +185,15 @@ class metadata(object):
 
 class metadataList(object):
     # getされた時の動作
-    def on_get(self, req, res, id):
+    def on_get(self, req, res):
         # metadatafileの参照
         try:
+            msg = []
             files = os.listdir('metadata/')
             for file in files:
                 print file
+                msg.append(file)
+
         except IndexError:
             print 'Usage: %s TEXTFILE' % script_name
             msg = {"message": "File Not Found."}
