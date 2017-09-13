@@ -106,26 +106,6 @@ class upload(object):
         res.body = json.dumps(msg)
 
 
-
-class metadata(object):
-    # getされた時の動作
-    def on_get(self, req, res, id):
-        # metadatafileの参照
-        try:
-            f = open("metadata/" + id + ".metadata", 'rb')
-            data = f.read()
-            msg = data
-            f.close()
-        except IndexError:
-            print 'Usage: %s TEXTFILE' % script_name
-            msg = {"message": "File Not Found."}
-        except IOError:
-            print '"%s" cannot be opened.' % arg
-            msg = {"message": "File Not Found."}
-        
-
-        res.body = json.dumps(msg)
-
 class download(object):
     # getされた時の動作
     def on_get(self, req, res):
@@ -184,12 +164,49 @@ class download(object):
         ## res.body = json.dumps(msg)
         res.body = json.dumps(decrypt_data)
 
+class metadata(object):
+    # getされた時の動作
+    def on_get(self, req, res, id):
+        # metadatafileの参照
+        try:
+            f = open("metadata/" + id + ".metadata", 'rb')
+            data = f.read()
+            msg = data
+            f.close()
+        except IndexError:
+            print 'Usage: %s TEXTFILE' % script_name
+            msg = {"message": "File Not Found."}
+        except IOError:
+            print '"%s" cannot be opened.' % arg
+            msg = {"message": "File Not Found."}
+        
+
+        res.body = json.dumps(msg)
+
+class metadataList(object):
+    # getされた時の動作
+    def on_get(self, req, res, id):
+        # metadatafileの参照
+        try:
+            files = os.listdir('metadata/')
+            for file in files:
+                print file
+        except IndexError:
+            print 'Usage: %s TEXTFILE' % script_name
+            msg = {"message": "File Not Found."}
+        except IOError:
+            print '"%s" cannot be opened.' % arg
+            msg = {"message": "File Not Found."}
+        
+
+        res.body = json.dumps(msg)
 
 ## Routing
 ## app = falcon.ipfsapi()
 api.add_route("/upload", upload())
+api.add_route("/download", download())
 api.add_route("/metadata/{id}", metadata())
-api.add_route("/download/", download())
+api.add_route("/metadataList", metadataList())
 
 
 
