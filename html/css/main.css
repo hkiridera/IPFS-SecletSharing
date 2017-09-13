@@ -1,7 +1,7 @@
 #dragandrophandler
 {
     border:2px dotted #0B85A1;
-    width:500px;
+    width:100%;
     color:#92AAB0;
     text-align:left;vertical-align:middle;
     padding:10px 10px 10 10px;
@@ -30,12 +30,12 @@
 {
     border-top:1px solid #A9CCD1;
     min-height:25px;
-    width:700px;
+    width:100%;
     padding:10px 10px 0px 10px;
     vertical-align:top;
 }
 .statusbar:nth-child(odd){
-    background:#EBEFF0;
+    background:#FFFFFF;
 }
 .filename
 {
