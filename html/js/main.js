@@ -111,6 +111,30 @@ function downloadFileToServer(formData,status)
     status.setAbort(jqXHR);
 }
   
+function metadataFileListToServer()
+{
+    var uploadURL ="http://192.168.12.118:8000/metadataList"; //Upload URL
+    //var uploadURL ="http://localhost:8000/metadataList"; //Upload URL
+    var extraData ={}; //Extra Data.
+    var jqXHR=$.ajax({
+        xhr: function() {
+
+        },
+        url: uploadURL,
+        crossDomain: true,
+        type: "GET",
+        contentType:'application/json',
+        processData: false,
+        cache: false,
+        dataType: false,
+        success: function(data){
+            status.setProgress(100);
+            console.log("data")
+            
+        }
+    });
+}
+
 
 var rowCount=0;
 function createStatusbar(obj)

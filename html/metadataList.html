@@ -6,7 +6,7 @@
         <script src="js/jquery.xdomainajax.js" type="text/javascript"></script>
         <script src="js/main.js" type="text/javascript"></script>
         <link rel="stylesheet" type="text/css" href="css/main.css" media="all">
-   </head>
+    </head>
       
     <body>
         <!-- navi bar -->
@@ -19,7 +19,7 @@
                 </button>
                 <a href="" class="navbar-brand">改竄・削除不可秘密分散 ファイル共有サービス</a>
             </div>
-              
+                    
             <div id="patern04" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="./download.html">Download</a></li>
@@ -29,23 +29,20 @@
             </div>
         </nav>
 
-    
         <div class="container">
             <div class="row">
-                <h1>Download</h1>
+                <h1>MetadataList</h1>
+                <!--
                 <div class="col-sm-12" id="dragandrophandler" >ここにドロップしてください。</div>
-            </div>
-        </div>
-
-        <div class="container">
-            <div class="row">
+                -->
                 <!-- ファイルリスト -->
                 <div class="col-sm-12" id="status1"></div>
             </div>
         </div>
-    </body> 
+    </body>
 
     <script>
+        metadataFileListToServer();
         $(document).ready(function()
         {
             var obj = $("#dragandrophandler");
@@ -66,13 +63,10 @@
             {
                 $(this).css('border', '2px dotted #0B85A1');
                 e.preventDefault();
-                var files = e.originalEvent.dataTransfer.files;   
-        
-                // file1個ずつ処理していく 
-                for (var i = 0; i < files.length; i++)
-                {
-                    handleFileDownload(files[i],obj);
-                }
+
+                // metadataListを取得する
+                metadataFileListToServer();
+             
             });
 
             $(document).on('dragenter', function (e)
@@ -93,8 +87,7 @@
                 e.stopPropagation();
                 e.preventDefault();
             });
-        
+    
         });
     </script>
-
     </html>
