@@ -4,7 +4,7 @@ function uploadFileToServer(formData,status)
     //var bytesArray = new Uint8Array(formData);
 
     //var uploadURL ="http://192.168.12.118:8000/upload"; //Upload URL
-    var uploadURL ="http://192.168.12.110:8000/upload"; //Upload URL
+    var uploadURL ="http://localhost:18000/upload"; //Upload URL
     var extraData ={}; //Extra Data.
     var jqXHR=$.ajax({
         xhr: function() {
@@ -59,7 +59,7 @@ function downloadFileToServer(formData,status)
     //filename = (new Function("return " + formData))();
     //filename = filename.filename;
 
-    var uploadURL ="http://192.168.12.110:8000/download"; //Upload URL
+    var uploadURL ="http://localhost:18000/download"; //Upload URL
     //var uploadURL ="http://localhost:8000/download"; //Upload URL
     var extraData ={}; //Extra Data.
     var jqXHR=$.ajax({
@@ -113,7 +113,7 @@ function downloadFileToServer(formData,status)
   
 function metadataFileListToServer()
 {
-    var uploadURL ="http://192.168.12.118:8000/metadataList"; //Upload URL
+    var uploadURL ="http://192.168.12.118:18000/metadataList"; //Upload URL
     //var uploadURL ="http://localhost:8000/metadataList"; //Upload URL
     var extraData ={}; //Extra Data.
     var jqXHR=$.ajax({
