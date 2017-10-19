@@ -6,7 +6,7 @@ python-dev
 - git clone
 ```
 git clone https://github.com/hkiridera/IPFS-SecletSharing.git
-cd IPFS-SecletSharing
+cd IPFS-SecletSharing/PKG
 ```
 - pipの依存パッケージインストール
 ```
@@ -19,13 +19,16 @@ git clone https://github.com/hkiridera/ansible.git
 cd ansible
 ansible-playbook -i inventory/hosts rpi-ipfs.yml
 ```
+- npmのパッケージのインストール
+```
+npm install
+```
 
 
 # 起動
 - IPFS
 ```
-ipfs init (初回のみ)
-ipfs daemon
+IPFS/start.bat
 ```
 - IPFS-SecletSharing
 ```
