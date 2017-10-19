@@ -1,0 +1,27 @@
+{
+  "name": "IPFS-SecletSharing",
+  "version": "1.0.0",
+  "description": "python-pip  \r python-dev",
+  "main": "main.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hkiridera/IPFS-SecletSharing.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hkiridera/IPFS-SecletSharing/issues"
+  },
+  "homepage": "https://github.com/hkiridera/IPFS-SecletSharing#readme",
+  "dependencies": {
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  }
+}
