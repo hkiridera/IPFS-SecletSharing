@@ -1,5 +1,6 @@
-upload/*
-download/*
-metadata/*
-node_modules/*
-tmp/*
+*/upload/*
+*/download/*
+*/metadata/*
+*/node_modules/*
+*/tmp/*
+IPFS/*
