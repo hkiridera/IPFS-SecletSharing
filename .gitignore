@@ -2,3 +2,4 @@ upload/*
 download/*
 metadata/*
 node_modules/*
+tmp/*
