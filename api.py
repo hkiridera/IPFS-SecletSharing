@@ -246,5 +246,5 @@ def get_decrypt_data(cipher_data_base64, key, iv):
 
 if __name__ == "__main__":
     from wsgiref import simple_server
-    httpd = simple_server.make_server("0.0.0.0", 8000, api)
+    httpd = simple_server.make_server("0.0.0.0", 18000, api)
     httpd.serve_forever()
