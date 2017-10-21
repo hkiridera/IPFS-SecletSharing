@@ -37,11 +37,18 @@ python api.py
 
 # API Server
 ```
-http://localhost:8000/upload
-http://localhost:8000/download
+http://localhost:18000/upload
+http://localhost:18000/download
+http://localhost:18000/metadatalist
 ```
 # GUI
 ```
 http://localhost/IPFS-SecletSharing/html/upload.html
 http://localhost/IPFS-SecletSharing/html/download.html
+http://localhost/IPFS-SecletSharing/html/metadata.html
+http://localhost/IPFS-SecletSharing/html/ipfs.html
 ```
+
+
+# Electron版(Windows)
+準備中
