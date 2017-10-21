@@ -3,6 +3,7 @@
 // アプリケーションをコントロールするモジュール
 var electron = require('electron');
 var app = electron.app;
+const Menu = electron.Menu;
 var BrowserWindow = electron.BrowserWindow;
 
 // メインウィンドウはGCされないようにグローバル宣言
@@ -29,9 +30,31 @@ app.on('ready', function() {
   // APIサーバー起動
   var subpy = require('child_process').spawn('python',['./api.py']);
 
+  //メニュー
+  initWindowMenu(); 
+
   //ウィンドウが閉じられたらアプリも終了
   mainWindow.on('closed', function() {
     mainWindow = null;
   });
-  //mainWindow.openDevTools();
+  mainWindow.openDevTools();
 });
+
+
+
+function initWindowMenu(){
+  const template = [
+      {
+          label: 'menu',
+          submenu: [
+              {
+                  label: '開発者メニュー',
+                  click () { mainWindow.openDevTools(); }
+              }
+          ]
+      }
+  ]
+
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
+}
