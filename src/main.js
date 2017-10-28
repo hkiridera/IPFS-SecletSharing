@@ -27,9 +27,6 @@ app.on('ready', function() {
     }
   });
   mainWindow.loadURL('file://' + __dirname + '/html/download.html');
-  // APIサーバー起動
-  var subpy = require('child_process').spawn('python',['./api.py']);
-
   //メニュー
   initWindowMenu(); 
 
