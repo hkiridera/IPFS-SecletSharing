@@ -7,6 +7,7 @@
     "test": "test"
   },
   "scripts": {
+    "build": "electron-packager . IPFS-SecretSharing --platform=darwin,win32 --arch=x64 --electron-version=1.4.13 --overwrite",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,6 +22,12 @@
   },
   "homepage": "https://github.com/hkiridera/IPFS-SecletSharing#readme",
   "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "ipfs": "^0.26.0",
+    "ipfs-api": "^14.3.7",
+    "js-sha256": "^0.6.0",
+    "multer": "^1.3.0",
     "request": "^2.83.0",
     "request-promise": "^4.2.2"
   }
