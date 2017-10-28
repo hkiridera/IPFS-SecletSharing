@@ -1,1 +1,0 @@
-electron-packager . IPFS-SecretSharing --platform=darwin,win32 --arch=x64 --electron-version=1.4.13 --overwrite
