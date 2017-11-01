@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "build": "electron-packager . IPFS-SecretSharing --platform=darwin,win32 --arch=x64 --electron-version=1.4.13 --overwrite",
+    "build": "electron-packager . IPFS-SecretSharing --platform=linux,win32 --arch=x64,armv7l --electron-version=1.4.13 --overwrite",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
