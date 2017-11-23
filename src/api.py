@@ -44,8 +44,8 @@ class upload(object):
         # bodyからファイルのバイナリ取得
         body = req.stream.read()
         id = hashlib.md5(body).hexdigest()
-        #print body
-        #print id
+        print body
+        print id
         
         # 暗号化
         iv = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(64)])
@@ -103,6 +103,7 @@ class upload(object):
         c.write( json.dumps(msg) )
         c.close
 
+        print msg
         res.body = json.dumps(msg)
 
 

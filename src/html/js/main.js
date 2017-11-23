@@ -4,9 +4,9 @@ function uploadFileToServer(formData,status)
     //var bytesArray = new Uint8Array(formData);
 
     //var uploadURL ="http://192.168.12.118:8000/upload"; //Upload URL
-    const URL ="http://localhost:18000/upload"; //Upload URL
-    const extraData ={}; //Extra Data.
-    const jqXHR=$.ajax({
+    var uploadURL ="http://localhost:18000/upload"; //Upload URL
+    var extraData ={}; //Extra Data.
+    var jqXHR=$.ajax({
         xhr: function() {
         var xhrobj = $.ajaxSettings.xhr();
         if (xhrobj.upload) {
@@ -23,7 +23,7 @@ function uploadFileToServer(formData,status)
         }
         return xhrobj;
         },
-        url: URL,
+        url: uploadURL,
         crossDomain: true,
         type: "POST",
         headers: {
@@ -59,10 +59,10 @@ function downloadFileToServer(formData,status)
     //filename = (new Function("return " + formData))();
     //filename = filename.filename;
 
-    const URL ="http://localhost:18000/download"; //Upload URL
+    var uploadURL ="http://localhost:18000/download"; //Upload URL
     //var uploadURL ="http://localhost:8000/download"; //Upload URL
-    const extraData ={}; //Extra Data.
-    const jqXHR=$.ajax({
+    var extraData ={}; //Extra Data.
+    var jqXHR=$.ajax({
         xhr: function() {
         var xhrobj = $.ajaxSettings.xhr();
         if (xhrobj.upload) {
@@ -79,7 +79,7 @@ function downloadFileToServer(formData,status)
         }
         return xhrobj;
         },
-        url: URL,
+        url: uploadURL,
         crossDomain: true,
         type: "POST",
         headers: {
@@ -113,58 +113,28 @@ function downloadFileToServer(formData,status)
   
 function metadataFileListToServer()
 {
-    console.log("hoge")
-    const URL = "http://localhost:18000/metadataList"; //Metadata URL
-    //var uploadURL ="http://localhost:8000/download"; //Upload URL
-    const extraData ={}; //Extra Data.
-    const jqXHR=$.ajax({
+    var uploadURL ="http://192.168.12.118:18000/metadataList"; //Upload URL
+    //var uploadURL ="http://localhost:8000/metadataList"; //Upload URL
+    var extraData ={}; //Extra Data.
+    var jqXHR=$.ajax({
         xhr: function() {
-        var xhrobj = $.ajaxSettings.xhr();
-        if (xhrobj.upload) {
-            xhrobj.upload.addEventListener('progress', function(event) {
-                var percent = 0;
-                var position = event.loaded || event.position;
-                var total = event.total;
-                if (event.lengthComputable) {
-                    percent = Math.ceil(position / total * 100);
-                }
-                //Set progress
-                status.setProgress(percent);
-            }, false);
-        }
-        return xhrobj;
+
         },
-        url: URL,
+        url: uploadURL,
         crossDomain: true,
         type: "GET",
-        headers: {
-        },
         contentType:'application/json',
         processData: false,
         cache: false,
-        //data: formData,
         dataType: false,
         success: function(data){
-            console.log(data)
-            for (let i=0; i< data.length; i++ ) {
-                $("#articletable").append($("<tr></tr>")
-                        .append($("<td></td>").text(data[i]))
-                        .append($("<td></td>")
-                            .append($('<button class="btn btn-default" type="button" value=' + data[i] + '></button>').text("download")
-                            )
-                        )
-                            
-
-                );
-            }  
+            status.setProgress(100);
+            console.log("data")
+            
         }
     });
 }
 
-function createMetadataTable()
-{
-    metadataFileListToServer()
-}
 
 var rowCount=0;
 function createStatusbar(obj)

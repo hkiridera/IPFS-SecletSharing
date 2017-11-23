@@ -26,6 +26,12 @@ app.on('ready', function() {
       nodeIntegration: false
     }
   });
+  //var subpy = require('child_process').spawn('python',['./api.py']);
+  //var subpy = require('child_process').execFile('python',['E:\ドキュメント\git\IPFS-SecletSharing\src\api.py']);
+  const path = require('path');
+  const scriptFilename = path.join(__dirname, 'api.py');
+  //var subpy = require('child_process').spawn('python',[scriptFilename]);
+
   mainWindow.loadURL('file://' + __dirname + '/html/download.html');
   //メニュー
   initWindowMenu(); 
@@ -33,6 +39,7 @@ app.on('ready', function() {
   //ウィンドウが閉じられたらアプリも終了
   mainWindow.on('closed', function() {
     mainWindow = null;
+    subpy.kill('SIGINT');
   });
   mainWindow.openDevTools();
 });

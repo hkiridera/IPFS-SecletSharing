@@ -39,19 +39,18 @@ app.post('/upload', function (req, res) {
         const id = md5hash.digest('hex');
         let filepath = __dirname + "/tmp/" + id;
         //暗号化
-        data = encrypt(data);
-        //復号化
-        //console.log(decrypt(data));
+        encrypt_data = encrypt(data);
+
 
         //暗号化したデータの書き込み
-        fs.writeFile(filepath, data, function (err) {
+        fs.writeFile(filepath, encrypt_data, function (err) {
             //失敗ならエラーを返す
             if (err) {
                 console.log(err);
             }
 
-            const splitLength = 1 * 1024;
-            let arr = splitByLength(data, splitLength);
+            const splitLength = 500 * 1024 ;
+            let arr = splitByLength(encrypt_data, splitLength);
             const div_num = arr.length
             let ipfs_hashs = []
             // 暗号化後のデータを指定の容量で分割する
@@ -104,14 +103,85 @@ app.post('/upload', function (req, res) {
                     });
                     res.end(JSON.stringify(msg));
                 });
-            }, 1500);
+            }, 6000);
         });
     });
 
 
 });
 
+app.post('/download', function (req, res) {
 
+    fs.readFile(req.file.path, function (err, data) {
+        // ファイル名
+        //const filename = req.file.originalname;
+        const metadata = JSON.parse(data)
+        console.dir(metadata, {
+            depth: null
+        });
+
+        //復号化
+        //console.log(decrypt(data));
+        const div_num = metadata.div_num;
+        let ipfs_hashs = metadata.ipfs;
+        const id = metadata.id;
+        const filename = metadata.filename;
+        
+        for (let i = 0; i < div_num; i++) {
+            // ipfsからダウンロード
+            //ipfs.files.cat(ipfs_hashs[i].Hash, {
+            ipfs.files.get(ipfs_hashs[i][0].hash, function (err, stream) {
+                stream.on('data', (file) => {
+                    // write the file's path and contents to standard out
+                    //console.log(file.path)
+                    //console.dir(id)
+                    let filepath_metadata = __dirname + "/tmp/" + ipfs_hashs[i][0].path;
+                    file.content.pipe(fs.createWriteStream(filepath_metadata))
+
+
+                })
+            })
+        }
+
+
+        // 復号化
+        const filepath_frac = __dirname + "/tmp/" + id + ".frac";
+        let frac_data = [];
+        setTimeout(function () {
+        
+        for (let i = 0; i < div_num; i++) {
+            fs.readFile(filepath_frac + i, function (err, data) {
+                frac_data[ipfs_hashs[i][0].path] = data;
+                console.log(frac_data[ipfs_hashs[i][0].path])
+            })
+        }
+        }, 60000);
+
+        let encrypt_data = "";
+        setTimeout(function () {
+            for (let i = 0; i < div_num; i++) {
+                
+                //encrypt_data = Buffer.concat(encrypt_data + frac_data[metadata.id + ".frac" + i]);
+                encrypt_data += frac_data[metadata.id + ".frac" + i]
+            }
+        }, 90000);
+
+        setTimeout(function () {
+            //復号化
+            //console.log(encrypt_data)
+            //console.log(decrypt(encrypt_data));
+            const filepath_decrypt = __dirname + "/download/" + filename;
+            console.log(filepath_decrypt)
+            decrypt_data = decrypt(encrypt_data)
+            fs.writeFile(filepath_decrypt, decrypt_data, function (err) {
+                console.log("success!!")
+            })
+        }, 120000);
+
+    });
+
+
+});
 
 var server = app.listen(3000, function () {
     var host = server.address().address;
