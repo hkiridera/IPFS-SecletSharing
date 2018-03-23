@@ -1,6 +1,7 @@
 # 依存パッケージ
 python-pip  
 python-dev  
+nodejs 
 
 # インストール
 - git clone
