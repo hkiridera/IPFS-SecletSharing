@@ -28,7 +28,9 @@
     "ipfs-api": "^14.3.7",
     "js-sha256": "^0.6.0",
     "multer": "^1.3.0",
+    "n": "^2.1.8",
     "request": "^2.83.0",
-    "request-promise": "^4.2.2"
+    "request-promise": "^4.2.2",
+    "web3": "^0.20.6"
   }
 }
