@@ -1,13 +1,24 @@
 #!/bin/bash
 
-service nginx start
+#service nginx start
 
+## TOR start
+sudo service tor
 
 ## IPFS起動
-/var/www/html/go-ipfs/ipfs init
+ipfs init
 sed -i -e "s/127.0.0.1/0.0.0.0/g" ~/.ipfs/config
-/var/www/html/go-ipfs/ipfs daemon &
+ipfs daemon &
 
 sleep 30
 ## IPFS APIサーバ起動
-python /var/www/html/api.py
+mkdir -p tmp tmp2 metadata  
+python api.py
+
+
+## geth
+geth init --datadir /tmp/eth_private genesis.json
+geth --rpc --rpcport 8545 --rpcapi "web3,eth,net,personal" --rpccorsdomain "*" --rpcaddr "0.0.0.0" --datadir "/tmp/eth_private" --nodiscover --networkid 10 console
+
+## wallet
+ethereumwallet --rpc /tmp/eth_private/geth.ipc
