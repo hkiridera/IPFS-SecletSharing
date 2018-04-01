@@ -25,6 +25,10 @@ ansible-playbook -i inventory/hosts rpi-ipfs.yml
 npm install
 ```
 
+- parity
+```
+$ bash <(curl https://get.parity.io -kL)
+```
 
 # 起動
 - IPFS

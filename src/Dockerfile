@@ -13,4 +13,4 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.4.13/go-ipfs_v0.4.13_linux-amd64.tar.gz
 RUN pip install -r requirements.txt
 
 EXPOSE 80 5001 18000
-CMD [ "bash", "/var/www/html/start.sh" ]
+CMD [ "bash", "start.sh" ]
