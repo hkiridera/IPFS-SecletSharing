@@ -1,4 +1,5 @@
-pragma solidity ^0.4.21;
+//pragma solidity ^0.4.23;
+pragma solidity ^0.4.20;
 
 import "./ERC721.sol";
 import "./ERC721BasicToken.sol";
@@ -11,14 +12,17 @@ import "./ERC721BasicToken.sol";
  * @dev see https://github.com/ethereum/EIPs/blob/master/EIPS/eip-721.md
  */
 contract ERC721Token is ERC721, ERC721BasicToken {
-  // Token name
+  // Token name that is content file name.
   string internal name_;
-
+  
   // Token symbol
   string internal symbol_;
-
+  
+  // Contents Provider
+  address internal CEO;
+  
   // Mapping from owner to list of owned token IDs
-  mapping (address => uint256[]) internal ownedTokens;
+  mapping(address => uint256[]) internal ownedTokens;
 
   // Mapping from token ID to index of the owner tokens list
   mapping(uint256 => uint256) internal ownedTokensIndex;
@@ -32,13 +36,46 @@ contract ERC721Token is ERC721, ERC721BasicToken {
   // Optional mapping for token URIs
   mapping(uint256 => string) internal tokenURIs;
 
+
+  struct Contents {
+    string      contentsName;           //ファイル名
+    string      contentsDetails;        //詳細
+    uint        contentsPrice;          //価格(wei)
+    string      contentsMetadata;       //メタデータ
+    mapping (address => bool) contentsPurchaser;    // 購入者リスト
+  }
+  
+  // 
+  mapping(uint256 => Contents) internal contents;
+
   /**
    * @dev Constructor function
    */
-  function ERC721Token(string _name, string _symbol) public {
+  constructor(string _name, string _symbol) public {
     name_ = _name;
     symbol_ = _symbol;
+    CEO = msg.sender;
   }
+
+
+  /**
+   * @dev Checks msg.value more than contentsPrice
+   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
+   */
+  modifier purchaseAvailable(uint256 _tokenId) {
+    require(contents[_tokenId].contentsPrice < msg.value);
+    _;
+  }
+  
+  /**
+   * @dev contents was purchased
+   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
+   */
+  modifier purchased(uint256 _tokenId) {
+    require(contents[_tokenId].contentsPurchaser[msg.sender] = true);
+    _;
+  }
+  
 
   /**
    * @dev Gets the token name
@@ -148,13 +185,82 @@ contract ERC721Token is ERC721, ERC721BasicToken {
    * @param _to address the beneficiary that will own the minted token
    * @param _tokenId uint256 ID of the token to be minted by the msg.sender
    */
-  function _mint(address _to, uint256 _tokenId) internal {
+  function _mint(address _to, uint256 _tokenId, string _contentsName, string _contentsDetails, uint256 _contentsPrice, string _contentsMetadata) internal {
     super._mint(_to, _tokenId);
 
     allTokensIndex[_tokenId] = allTokens.length;
     allTokens.push(_tokenId);
+    
+    // コンテンツの情報を追加する
+    Contents memory _contents;
+    _contents.contentsName = _contentsName;
+    _contents.contentsDetails = _contentsDetails;
+    _contents.contentsPrice = _contentsPrice;
+    _contents.contentsMetadata = _contentsMetadata;
+    contents[_tokenId] = _contents;
+  }
+  
+  
+
+  /**
+   * @dev Purchase the right to download content
+   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
+   */
+  function purchaseContents(uint256 _tokenId) public payable purchaseAvailable(_tokenId){
+      
+      // send contentPrice to CEO 1%
+      uint256 fee = contents[_tokenId].contentsPrice / 100;
+      CEO.transfer(fee);
+      // send purchasePrice to TokenOwner 
+      uint256 purchasePrice = contents[_tokenId].contentsPrice - fee;
+      // send fee to TokenOwner
+      tokenOwner[_tokenId].transfer(purchasePrice);
+      
+      // Purchased
+      contents[_tokenId].contentsPurchaser[msg.sender] = true;
   }
 
+  /**
+   * @dev return contentsName
+   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
+   */
+  function getContentsName(uint256 _tokenId) public returns(string){
+      return contents[_tokenId].contentsName;
+  }
+
+  /**
+   * @dev return contentsDetails
+   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
+   */
+  function getContentsDetails(uint256 _tokenId) public returns(string){
+      return contents[_tokenId].contentsDetails;
+  }
+  
+  /**
+   * @dev return contentsPrice
+   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
+   */
+  function getContentsPrice(uint256 _tokenId) public returns(uint256){
+      return contents[_tokenId].contentsPrice;
+  }  
+
+  /**
+   * @dev return contentsMetadata
+   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
+   */
+  function getContentsMetadata(uint256 _tokenId) public purchased(_tokenId) returns(string){
+      return contents[_tokenId].contentsMetadata;
+  }
+  
+  /**
+   * @dev return contentsPrice
+   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
+   */
+  function getContentsPurchaser(uint256 _tokenId) public returns(bool){
+      return contents[_tokenId].contentsPurchaser[msg.sender];
+  }   
+  
+  
   /**
    * @dev Internal function to burn a specific token
    * @dev Reverts if the token does not exist
@@ -180,6 +286,13 @@ contract ERC721Token is ERC721, ERC721BasicToken {
     allTokens.length--;
     allTokensIndex[_tokenId] = 0;
     allTokensIndex[lastToken] = tokenIndex;
+  }
+
+
+  function kill() public{
+    if (msg.sender == CEO) {
+        selfdestruct(CEO);
+    } 
   }
 
 }
