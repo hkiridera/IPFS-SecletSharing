@@ -40,6 +40,7 @@ contract ERC721Token is ERC721, ERC721BasicToken {
   struct Contents {
     string      contentsName;           //ファイル名
     string      contentsDetails;        //詳細
+    string      contentsURL;            //URL
     uint        contentsPrice;          //価格(wei)
     string      contentsMetadata;       //メタデータ
     mapping (address => bool) contentsPurchaser;    // 購入者リスト
@@ -63,7 +64,7 @@ contract ERC721Token is ERC721, ERC721BasicToken {
    * @param _tokenId uint256 ID of the token to be minted by the msg.sender
    */
   modifier purchaseAvailable(uint256 _tokenId) {
-    require(contents[_tokenId].contentsPrice < msg.value);
+    require(contents[_tokenId].contentsPrice <= msg.value);
     _;
   }
   
@@ -72,7 +73,10 @@ contract ERC721Token is ERC721, ERC721BasicToken {
    * @param _tokenId uint256 ID of the token to be minted by the msg.sender
    */
   modifier purchased(uint256 _tokenId) {
-    require(contents[_tokenId].contentsPurchaser[msg.sender] = true);
+    require(contents[_tokenId].contentsPurchaser[msg.sender] == true ||
+    ownerOf(_tokenId) == msg.sender ||
+    CEO == msg.sender
+    );
     _;
   }
   
@@ -185,7 +189,7 @@ contract ERC721Token is ERC721, ERC721BasicToken {
    * @param _to address the beneficiary that will own the minted token
    * @param _tokenId uint256 ID of the token to be minted by the msg.sender
    */
-  function _mint(address _to, uint256 _tokenId, string _contentsName, string _contentsDetails, uint256 _contentsPrice, string _contentsMetadata) internal {
+  function _mint(address _to, uint256 _tokenId, string _contentsName, string _contentsDetails, string _contentsURL, uint256 _contentsPrice, string _contentsMetadata) internal {
     super._mint(_to, _tokenId);
 
     allTokensIndex[_tokenId] = allTokens.length;
@@ -195,6 +199,7 @@ contract ERC721Token is ERC721, ERC721BasicToken {
     Contents memory _contents;
     _contents.contentsName = _contentsName;
     _contents.contentsDetails = _contentsDetails;
+    _contents.contentsURL = _contentsURL;
     _contents.contentsPrice = _contentsPrice;
     _contents.contentsMetadata = _contentsMetadata;
     contents[_tokenId] = _contents;
@@ -208,13 +213,15 @@ contract ERC721Token is ERC721, ERC721BasicToken {
    */
   function purchaseContents(uint256 _tokenId) public payable purchaseAvailable(_tokenId){
       
-      // send contentPrice to CEO 1%
-      uint256 fee = contents[_tokenId].contentsPrice / 100;
-      CEO.transfer(fee);
-      // send purchasePrice to TokenOwner 
-      uint256 purchasePrice = contents[_tokenId].contentsPrice - fee;
-      // send fee to TokenOwner
-      tokenOwner[_tokenId].transfer(purchasePrice);
+      if(contents[_tokenId].contentsPrice !=0){
+        // send contentPrice to CEO 1%
+        uint256 fee = contents[_tokenId].contentsPrice / 100;
+        CEO.transfer(fee);
+        // send purchasePrice to TokenOwner 
+        uint256 purchasePrice = contents[_tokenId].contentsPrice - fee;
+        // send fee to TokenOwner
+        tokenOwner[_tokenId].transfer(purchasePrice);
+      }
       
       // Purchased
       contents[_tokenId].contentsPurchaser[msg.sender] = true;
@@ -224,31 +231,76 @@ contract ERC721Token is ERC721, ERC721BasicToken {
    * @dev return contentsName
    * @param _tokenId uint256 ID of the token to be minted by the msg.sender
    */
-  function getContentsName(uint256 _tokenId) public returns(string){
+  function getContentsName(uint256 _tokenId) public view returns(string){
       return contents[_tokenId].contentsName;
+  }
+  
+  /**
+   * @dev Update Contents Name. 
+   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
+   * @param _contentsName string name of the contents
+   */
+  function updateContentsName(uint256 _tokenId, string _contentsName) public onlyOwnerOf(_tokenId){
+      contents[_tokenId].contentsName = _contentsName;
   }
 
   /**
    * @dev return contentsDetails
    * @param _tokenId uint256 ID of the token to be minted by the msg.sender
    */
-  function getContentsDetails(uint256 _tokenId) public returns(string){
+  function getContentsDetails(uint256 _tokenId) public view returns(string){
       return contents[_tokenId].contentsDetails;
   }
+  
+  /**
+   * @dev update contents contentsDetails
+   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
+   * @param _contentsDetails string details of the contents
+   */
+  function updateContentsDetails(uint256 _tokenId, string _contentsDetails) public onlyOwnerOf(_tokenId){
+      contents[_tokenId].contentsDetails = _contentsDetails;
+  }
+  
+  /**
+   * @dev return contents URL
+   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
+   */
+   function getContentsURL(uint256 _tokenId) public view purchased(_tokenId) returns(string){
+       return contents[_tokenId].contentsURL;
+   }
+   
+   /**
+    * @dev update contents URL
+    * @param _tokenId uint256 ID of the token to be minted by the msg.sender
+    * @param _contentsURL string url of the contents
+    */
+    function updateContentsURL(uint256 _tokenId, string _contentsURL) public onlyOwnerOf(_tokenId){
+        contents[_tokenId].contentsURL = _contentsURL;
+    }
   
   /**
    * @dev return contentsPrice
    * @param _tokenId uint256 ID of the token to be minted by the msg.sender
    */
-  function getContentsPrice(uint256 _tokenId) public returns(uint256){
+  function getContentsPrice(uint256 _tokenId) public view returns(uint256){
       return contents[_tokenId].contentsPrice;
   }  
+  
+  /**
+   * @dev update contents price
+   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
+   * @param _contentsPrice uint256 price of the contents
+   */
+   function updateContentsPrice(uint256 _tokenId, uint256 _contentsPrice) public onlyOwnerOf(_tokenId){
+       contents[_tokenId].contentsPrice = _contentsPrice;
+   }
+   
 
   /**
    * @dev return contentsMetadata
    * @param _tokenId uint256 ID of the token to be minted by the msg.sender
    */
-  function getContentsMetadata(uint256 _tokenId) public purchased(_tokenId) returns(string){
+  function getContentsMetadata(uint256 _tokenId) public view purchased(_tokenId) returns(string){
       return contents[_tokenId].contentsMetadata;
   }
   
@@ -256,7 +308,7 @@ contract ERC721Token is ERC721, ERC721BasicToken {
    * @dev return contentsPrice
    * @param _tokenId uint256 ID of the token to be minted by the msg.sender
    */
-  function getContentsPurchaser(uint256 _tokenId) public returns(bool){
+  function getContentsPurchaser(uint256 _tokenId) public view returns(bool){
       return contents[_tokenId].contentsPurchaser[msg.sender];
   }   
   
