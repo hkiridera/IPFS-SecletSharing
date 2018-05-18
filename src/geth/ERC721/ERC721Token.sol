@@ -3,6 +3,7 @@ pragma solidity ^0.4.20;
 
 import "./ERC721.sol";
 import "./ERC721BasicToken.sol";
+import "./ContentsBase.sol";
 
 
 /**
@@ -11,7 +12,7 @@ import "./ERC721BasicToken.sol";
  * Moreover, it includes approve all functionality using operator terminology
  * @dev see https://github.com/ethereum/EIPs/blob/master/EIPS/eip-721.md
  */
-contract ERC721Token is ERC721, ERC721BasicToken {
+contract ERC721Token is ERC721, ERC721BasicToken, ContentsBase {
   // Token name that is content file name.
   string internal name_;
   
@@ -36,16 +37,6 @@ contract ERC721Token is ERC721, ERC721BasicToken {
   // Optional mapping for token URIs
   mapping(uint256 => string) internal tokenURIs;
 
-
-  struct Contents {
-    string      contentsName;           //ファイル名
-    string      contentsDetails;        //詳細
-    string      contentsURL;            //URL
-    uint        contentsPrice;          //価格(wei)
-    string      contentsMetadata;       //メタデータ
-    mapping (address => bool) contentsPurchaser;    // 購入者リスト
-  }
-  
   // 
   mapping(uint256 => Contents) internal contents;
 
@@ -57,29 +48,6 @@ contract ERC721Token is ERC721, ERC721BasicToken {
     symbol_ = _symbol;
     CEO = msg.sender;
   }
-
-
-  /**
-   * @dev Checks msg.value more than contentsPrice
-   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
-   */
-  modifier purchaseAvailable(uint256 _tokenId) {
-    require(contents[_tokenId].contentsPrice <= msg.value);
-    _;
-  }
-  
-  /**
-   * @dev contents was purchased
-   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
-   */
-  modifier purchased(uint256 _tokenId) {
-    require(contents[_tokenId].contentsPurchaser[msg.sender] == true ||
-    ownerOf(_tokenId) == msg.sender ||
-    CEO == msg.sender
-    );
-    _;
-  }
-  
 
   /**
    * @dev Gets the token name
@@ -207,110 +175,7 @@ contract ERC721Token is ERC721, ERC721BasicToken {
   
   
 
-  /**
-   * @dev Purchase the right to download content
-   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
-   */
-  function purchaseContents(uint256 _tokenId) public payable purchaseAvailable(_tokenId){
-      
-      if(contents[_tokenId].contentsPrice !=0){
-        // send contentPrice to CEO 1%
-        uint256 fee = contents[_tokenId].contentsPrice / 100;
-        CEO.transfer(fee);
-        // send purchasePrice to TokenOwner 
-        uint256 purchasePrice = contents[_tokenId].contentsPrice - fee;
-        // send fee to TokenOwner
-        tokenOwner[_tokenId].transfer(purchasePrice);
-      }
-      
-      // Purchased
-      contents[_tokenId].contentsPurchaser[msg.sender] = true;
-  }
 
-  /**
-   * @dev return contentsName
-   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
-   */
-  function getContentsName(uint256 _tokenId) public view returns(string){
-      return contents[_tokenId].contentsName;
-  }
-  
-  /**
-   * @dev Update Contents Name. 
-   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
-   * @param _contentsName string name of the contents
-   */
-  function updateContentsName(uint256 _tokenId, string _contentsName) public onlyOwnerOf(_tokenId){
-      contents[_tokenId].contentsName = _contentsName;
-  }
-
-  /**
-   * @dev return contentsDetails
-   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
-   */
-  function getContentsDetails(uint256 _tokenId) public view returns(string){
-      return contents[_tokenId].contentsDetails;
-  }
-  
-  /**
-   * @dev update contents contentsDetails
-   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
-   * @param _contentsDetails string details of the contents
-   */
-  function updateContentsDetails(uint256 _tokenId, string _contentsDetails) public onlyOwnerOf(_tokenId){
-      contents[_tokenId].contentsDetails = _contentsDetails;
-  }
-  
-  /**
-   * @dev return contents URL
-   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
-   */
-   function getContentsURL(uint256 _tokenId) public view purchased(_tokenId) returns(string){
-       return contents[_tokenId].contentsURL;
-   }
-   
-   /**
-    * @dev update contents URL
-    * @param _tokenId uint256 ID of the token to be minted by the msg.sender
-    * @param _contentsURL string url of the contents
-    */
-    function updateContentsURL(uint256 _tokenId, string _contentsURL) public onlyOwnerOf(_tokenId){
-        contents[_tokenId].contentsURL = _contentsURL;
-    }
-  
-  /**
-   * @dev return contentsPrice
-   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
-   */
-  function getContentsPrice(uint256 _tokenId) public view returns(uint256){
-      return contents[_tokenId].contentsPrice;
-  }  
-  
-  /**
-   * @dev update contents price
-   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
-   * @param _contentsPrice uint256 price of the contents
-   */
-   function updateContentsPrice(uint256 _tokenId, uint256 _contentsPrice) public onlyOwnerOf(_tokenId){
-       contents[_tokenId].contentsPrice = _contentsPrice;
-   }
-   
-
-  /**
-   * @dev return contentsMetadata
-   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
-   */
-  function getContentsMetadata(uint256 _tokenId) public view purchased(_tokenId) returns(string){
-      return contents[_tokenId].contentsMetadata;
-  }
-  
-  /**
-   * @dev return contentsPrice
-   * @param _tokenId uint256 ID of the token to be minted by the msg.sender
-   */
-  function getContentsPurchaser(uint256 _tokenId) public view returns(bool){
-      return contents[_tokenId].contentsPurchaser[msg.sender];
-  }   
   
   
   /**
